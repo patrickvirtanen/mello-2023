@@ -1,0 +1,15 @@
+@font-face {
+  font-family: "Light"; /*Can be any text*/
+  src: local("RobotoSlabLight"),
+    url("./fonts/RobotoSlab-Light.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Bold"; /*Can be any text*/
+  src: local("RobotoSlabBold"),
+    url("./fonts/RobotoSlab-Bold.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Regular"; /*Can be any text*/
+  src: local("RobotoSlabRegular"),
+    url("./fonts/RobotoSlab-Regular.ttf") format("truetype");
+}
