@@ -63,7 +63,7 @@ const LogInPage = () => {
       <Button handleClick={signUp}>SIGN UP</Button>
       <Button handleClick={logIn}>Log In</Button>
     </Wrapper>
-  );
+  )
 };
 
 const Wrapper = tw.div`

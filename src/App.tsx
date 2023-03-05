@@ -8,34 +8,34 @@ import { app } from "./firebase/clientApp";
 import Home from "./pages/Home";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-  const auth = getAuth(app);
+  const auth = getAuth(app)
 
   auth.onAuthStateChanged(function (user) {
     if (user) {
       // User is signed in.
-      setIsLoggedIn(true);
+      setIsLoggedIn(true)
     } else {
       // No user is signed in.
-      setIsLoggedIn(false);
+      setIsLoggedIn(false)
     }
-  });
+  })
 
   return (
     <>
-      <Container>{!isLoggedIn ? <LogInPage /> : <Home />}</Container>;
+      <Container>{!isLoggedIn ? <LogInPage /> : <Home />}</Container>
     </>
-  );
+  )
 }
 
 const Container = tw.div`
-    bg-mello-green
-    w-screen
+    bg-red-200
+    w-full
     font-reg
     h-screen
     p-4
-`;
+`
 
 const Button = tw.div`
     p-4

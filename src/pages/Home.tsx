@@ -1,32 +1,58 @@
 import { getAuth } from "firebase/auth";
-import React from "react";
-import tw from "tailwind-styled-components";
-import Card from "../components/Card";
+import React, { useEffect, useState } from "react"
+import tw from "tailwind-styled-components"
+import AllEntries from "../components/AllEntries"
+import Card from "../components/Card"
+import EntryDetails from "../components/EntryDetails"
+import { entries } from "../entries"
 
-import { app } from "../firebase/clientApp";
+import { app } from "../firebase/clientApp"
 
 const Home = () => {
-  const auth = getAuth(app);
+  const auth = getAuth(app)
+  const [chosenArtist, setChosenArtist] = useState<number>(0)
+
+  // useEffect(() => {
+  //   set
+  // }, [])
 
   const logOut = () => {
     auth
       .signOut()
       .then(function () {
         // Sign-out successful.
-        console.log("Sign-out successful.", auth);
+        console.log("Sign-out successful.", auth)
       })
       .catch(function (error) {
         // An error happened.
-      });
-  };
+      })
+  }
+
+  const openDetails = (value: number) => {
+    console.log("value", value)
+    setChosenArtist(value)
+  }
+  const resetDetails = (value: number | null) => {
+    console.log("value", value)
+    if (value) {
+      setChosenArtist(value)
+    } else {
+      setChosenArtist(0)
+    }
+  }
+
   return (
     <Wrapper>
-      Home
+      Home page
       <button onClick={logOut}>Log out</button>
-      <Card />
+      {chosenArtist === 0 ? (
+        <AllEntries openDetails={openDetails} />
+      ) : (
+        <EntryDetails chosenArtist={chosenArtist} resetArtist={resetDetails} />
+      )}
     </Wrapper>
-  );
-};
+  )
+}
 {
   /* <div>
 You are logged in <Button onClick={logOut}>LOG OUT</Button>
