@@ -6,6 +6,7 @@ import tw from "tailwind-styled-components";
 import LogInPage from "./pages/LogInPage";
 import { app } from "./firebase/clientApp";
 import Home from "./pages/Home";
+import { setUserEmail } from "./firebase/user"
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -15,7 +16,11 @@ function App() {
   auth.onAuthStateChanged(function (user) {
     if (user) {
       // User is signed in.
-      setIsLoggedIn(true)
+      console.log(user.email)
+      if (user.email) {
+        setUserEmail(user.email)
+        setIsLoggedIn(true)
+      }
     } else {
       // No user is signed in.
       setIsLoggedIn(false)
@@ -30,11 +35,16 @@ function App() {
 }
 
 const Container = tw.div`
-    bg-red-200
+    bg-white
+    text-black
     w-full
     font-reg
-    h-screen
-    p-4
+    h-full
+    pb-8
+    px-4
+    flex
+    justify-center
+    
 `
 
 const Button = tw.div`

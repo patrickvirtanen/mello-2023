@@ -1,4 +1,9 @@
 @font-face {
+  font-family: "Rampart"; /*Can be any text*/
+  src: local("rampartOneRegular"),
+    url("./fonts/RampartOne-Regular.ttf") format("truetype");
+}
+@font-face {
   font-family: "Light"; /*Can be any text*/
   src: local("RobotoSlabLight"),
     url("./fonts/RobotoSlab-Light.ttf") format("truetype");

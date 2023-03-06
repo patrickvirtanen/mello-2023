@@ -7,16 +7,21 @@ import { doc, getFirestore, setDoc } from "firebase/firestore"
 import { app } from "../firebase/clientApp"
 import { getUserData } from "../firebase/getUserData"
 import { getChosenArtist } from "../firebase/getChosenArtist"
+import ReactPlayer from "react-player"
+import { getUserEmail } from "../firebase/user"
+import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline"
 
 interface Details {
-  chosenArtist: number | undefined | null
-  resetArtist: (value: number | null) => void
+  chosenArtist: string | undefined | null
+  resetArtist: (value: string | null) => void
 }
 
 interface Artist {
   name: string
-  id: number
+  id: string
   src: string
+  song: string
+  video: string
 }
 
 const EntryDetails = ({ chosenArtist, resetArtist }: Details) => {
@@ -30,7 +35,7 @@ const EntryDetails = ({ chosenArtist, resetArtist }: Details) => {
     const fetchedData = await getUserData()
     setData(fetchedData)
     if (!(await getChosenArtist(chosenArtist!))) {
-      await setDoc(doc(db, "users", "patrick.virtanen@gmail.com"), {
+      await setDoc(doc(db, "users", getUserEmail()), {
         ...fetchedData,
         [chosenArtist!]: 0,
       })
@@ -45,8 +50,12 @@ const EntryDetails = ({ chosenArtist, resetArtist }: Details) => {
     setArtist(entry)
   }, [])
 
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
   const setVotingNumber = async (value: number) => {
-    await setDoc(doc(db, "users", "patrick.virtanen@gmail.com"), {
+    await setDoc(doc(db, "users", getUserEmail()), {
       ...data,
       [chosenArtist!]: value,
     })
@@ -56,10 +65,38 @@ const EntryDetails = ({ chosenArtist, resetArtist }: Details) => {
 
   return (
     <div className="w-full">
-      <Button onClick={() => resetArtist(null)}>Go Back</Button>
+      <Button
+        onClick={() => resetArtist(null)}
+        className="w-full px-4 button-19"
+      >
+        <ArrowUturnLeftIcon className="h-6 w-full text-white" />
+      </Button>
 
       <ArtistDetails>
-        <img className="rounded-lg" src={artist?.src}></img>
+        <ReactPlayer
+          url={artist?.video}
+          playing={true}
+          muted={true}
+          width="100%"
+          height="40vh"
+          loop={true}
+          // config={{
+          //   youtube: {
+          //     playerVars: { showinfo: 1 },
+          //     embedOptions: { showinfo: 1 },
+          //   },
+          // }}
+        />
+        <div className="bg-white w-full">
+          <div className="text-left text-2xl mt-2 pl-5">
+            <span>Artist </span>
+            <span>{artist?.name}</span>
+          </div>
+          <div className="text-left text-lg pl-5">
+            <span>Song </span>
+            <span>{artist?.song}</span>
+          </div>
+        </div>
       </ArtistDetails>
       <VotingNumbers vote={vote} selectedNumber={setVotingNumber} />
     </div>
@@ -69,9 +106,12 @@ const EntryDetails = ({ chosenArtist, resetArtist }: Details) => {
 const ArtistDetails = tw.div`
   w-full
   text-center
+  pointer-events-none
+  mb-1
+  
 `
 const Button = tw.button`
-text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800
+text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5  mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800
 `
 
 export default EntryDetails

@@ -7,6 +7,7 @@ module.exports = {
         light: ["Light"],
         bolding: ["Bold"],
         reg: ["Regular"],
+        rampart: ["Rampart"],
       },
       colors: {
         "egg-white": "#EDF5E1",
@@ -16,4 +17,4 @@ module.exports = {
     },
   },
   plugins: [],
-};
+}

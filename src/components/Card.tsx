@@ -2,16 +2,16 @@ import { useEffect, useState } from "react"
 import tw from "tailwind-styled-components"
 import { entries } from "../entries"
 import { getChosenArtist } from "../firebase/getChosenArtist"
-import video from "../videos/1.mp4"
 
 interface Entry {
   name: string
   src: string
-  id: number
+  id: string
+  song: string
 }
 
 const Card = (entry: Entry) => {
-  const [vote, setVote] = useState<number>(0)
+  const [vote, setVote] = useState<string>("")
 
   useEffect(() => {
     const getData = async () => {
@@ -23,13 +23,18 @@ const Card = (entry: Entry) => {
   }, [])
   return (
     <CardWrapper>
-      <div>{entry.name}</div>
-      <video autoPlay loop muted src={video}></video>
-      {/* <img
-        src={entry.src}
-        alt="entry image"
-        onClick={() => console.log("open card details")}
-      /> */}
+      <div className="relative rounded-lg">
+        <img
+          src={entry.src}
+          className="rounded-lg"
+          alt="entry image"
+          onClick={() => console.log("open card details")}
+        />
+        <div className="absolute bottom-0 bg-white w-full rounded-t-lg text-black opacity-70 p-2">
+          <div>{entry.name}</div>
+          <div>{entry.song}</div>
+        </div>
+      </div>
       <Number>{vote}</Number>
     </CardWrapper>
   )
@@ -41,16 +46,19 @@ const CardWrapper = tw.div`
     justify-center
     flex-col
     w-full
+    font-reg
     relative
-    font-reg`
+    py-4
+    `
 
 const Number = tw.button`
   text-white
-  absolute
-  bottom-0
-  left-0 
   bg-gradient-to-r
-  from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 dark:shadow-lg dark:shadow-teal-800/80 font-medium rounded-lg text-2xl p-5 text-center w-1/6 my-10 mx-4 
+  absolute
+  top-2
+  right-0
+  opacity-90
+  from-fuchsia-400 via-fuchsia-500 to-fuchsia-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-fuchsia-300 dark:focus:ring-fuchsia-800 shadow-lg shadow-fuchsia-500/50 dark:shadow-lg dark:shadow-fuchsia-800/80 font-medium rounded-lg text-2xl p-5 text-center w-1/5 m-4
   `
 
 export default Card

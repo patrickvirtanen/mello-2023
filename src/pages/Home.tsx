@@ -7,10 +7,12 @@ import EntryDetails from "../components/EntryDetails"
 import { entries } from "../entries"
 
 import { app } from "../firebase/clientApp"
+import ResultsPage from "./ResultsPage"
 
 const Home = () => {
   const auth = getAuth(app)
-  const [chosenArtist, setChosenArtist] = useState<number>(0)
+  const [chosenArtist, setChosenArtist] = useState<string>("")
+  const [showHome, setShowHome] = useState<boolean>(true)
 
   // useEffect(() => {
   //   set
@@ -28,27 +30,48 @@ const Home = () => {
       })
   }
 
-  const openDetails = (value: number) => {
+  const openDetails = (value: string) => {
     console.log("value", value)
     setChosenArtist(value)
   }
-  const resetDetails = (value: number | null) => {
+  const resetDetails = (value: string | null) => {
     console.log("value", value)
     if (value) {
       setChosenArtist(value)
     } else {
-      setChosenArtist(0)
+      setChosenArtist("")
     }
   }
 
   return (
     <Wrapper>
-      Home page
-      <button onClick={logOut}>Log out</button>
-      {chosenArtist === 0 ? (
-        <AllEntries openDetails={openDetails} />
+      <div className="flex w-full h-12 items-center justify-between">
+        <div
+          onClick={() => {
+            setShowHome(!showHome)
+            setChosenArtist("")
+          }}
+          className="button-19 mx-4"
+        >
+          {showHome ? "Result" : "Home"}
+        </div>
+        <div onClick={logOut} className="button-19">
+          Log out
+        </div>
+      </div>
+      {showHome ? (
+        <div className="w-full">
+          {chosenArtist === "" ? (
+            <AllEntries openDetails={openDetails} />
+          ) : (
+            <EntryDetails
+              chosenArtist={chosenArtist}
+              resetArtist={resetDetails}
+            />
+          )}
+        </div>
       ) : (
-        <EntryDetails chosenArtist={chosenArtist} resetArtist={resetDetails} />
+        <ResultsPage />
       )}
     </Wrapper>
   )
@@ -65,5 +88,10 @@ const Wrapper = tw.div`
     flex-col
     w-full
     font-reg
-`;
+    mb-8
+    mt-4
+`
+const Button = tw.button`
+text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5  mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800
+`
 export default Home;

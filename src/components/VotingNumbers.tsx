@@ -14,18 +14,14 @@ const VotingNumbers = ({ selectedNumber, vote }: Props) => {
       <Numbers
         onClick={() => selectedNumber(i)}
         key={i}
-        className={vote === i ? "ring-4 outline-none ring-teal-300 " : ""}
+        className={vote === i ? "ring-4 outline-none ring-fuchsia-800" : ""}
       >
         {i}
       </Numbers>
     )
   }
 
-  return (
-    <Wrapper>
-      {rows} {vote}
-    </Wrapper>
-  )
+  return <Wrapper>{rows}</Wrapper>
 }
 
 const Wrapper = tw.div`
@@ -35,10 +31,11 @@ const Wrapper = tw.div`
    w-full
    text-center
 `
+
 const Numbers = tw.button`
 text-white 
 bg-gradient-to-r
-from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 dark:shadow-lg dark:shadow-teal-800/80 font-medium rounded-lg text-lg p-5 text-center m-4
+from-fuchsia-400 via-fuchsia-500 to-fuchsia-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-fuchsia-300 dark:focus:ring-fuchsia-800 shadow-lg shadow-fuchsia-500/50 dark:shadow-lg dark:shadow-fuchsia-800/80 font-medium rounded-lg text-lg p-5 text-center m-4
 `
 // const InnerNumber = tw.span`
 // relative w-full px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0
