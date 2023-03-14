@@ -1,6 +1,8 @@
-import { getAuth } from "firebase/auth";
+import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline"
+import { getAuth, signInWithPopup } from "firebase/auth"
 import React, { useEffect, useState } from "react"
 import tw from "tailwind-styled-components"
+import { GlobalContext } from "../App"
 import AllEntries from "../components/AllEntries"
 import Card from "../components/Card"
 import EntryDetails from "../components/EntryDetails"
@@ -31,11 +33,9 @@ const Home = () => {
   }
 
   const openDetails = (value: string) => {
-    console.log("value", value)
     setChosenArtist(value)
   }
   const resetDetails = (value: string | null) => {
-    console.log("value", value)
     if (value) {
       setChosenArtist(value)
     } else {
@@ -43,26 +43,53 @@ const Home = () => {
     }
   }
 
+  const { prev } = React.useContext(GlobalContext)
+
   return (
     <Wrapper>
-      <div className="flex w-full h-12 items-center justify-between">
-        <div
+      {/* {prev ? prev : ""} */}
+
+      {showHome ? (
+        <div className="font-bold text-[#e879f9] text-[62px] uppercase">
+          HOME
+        </div>
+      ) : (
+        <div className="font-bold text-[#e879f9] text-[62px] uppercase">
+          Result
+        </div>
+      )}
+      <div className="flex w-full h-12 items-center justify-between mb-4">
+        <Button
           onClick={() => {
-            setShowHome(!showHome)
+            setShowHome(true)
             setChosenArtist("")
           }}
-          className="button-19 mx-4"
+          className="button-19 mx-4 w-full"
         >
-          {showHome ? "Result" : "Home"}
-        </div>
-        <div onClick={logOut} className="button-19">
-          Log out
-        </div>
+          Home
+        </Button>
+        <Button
+          onClick={() => {
+            setShowHome(false)
+            setChosenArtist("")
+          }}
+          className="button-19 mx-4 w-full"
+        >
+          Result
+        </Button>
       </div>
+
       {showHome ? (
-        <div className="w-full">
+        <div className="w-full mb-24">
           {chosenArtist === "" ? (
-            <AllEntries openDetails={openDetails} />
+            <div>
+              <AllEntries openDetails={openDetails} />
+              <div className="flex justify-end w-full my-8">
+                <Button onClick={logOut} className="button-19 w-full">
+                  Log out
+                </Button>
+              </div>
+            </div>
           ) : (
             <EntryDetails
               chosenArtist={chosenArtist}
@@ -73,14 +100,20 @@ const Home = () => {
       ) : (
         <ResultsPage />
       )}
+      {chosenArtist !== "" ? (
+        <Button
+          onClick={() => setChosenArtist("")}
+          className="button-19 mb-4 fixed bottom-5 w-5/6"
+        >
+          <ArrowUturnLeftIcon className="h-6 w-full text-white" />
+        </Button>
+      ) : (
+        ""
+      )}
     </Wrapper>
   )
 }
-{
-  /* <div>
-You are logged in <Button onClick={logOut}>LOG OUT</Button>
-</div> */
-}
+
 const Wrapper = tw.div`
     flex
     items-center
@@ -88,10 +121,11 @@ const Wrapper = tw.div`
     flex-col
     w-full
     font-reg
-    mb-8
     mt-4
+    h-full
+    
 `
 const Button = tw.button`
 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5  mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800
 `
-export default Home;
+export default Home

@@ -1,13 +1,11 @@
-import {
-  collection,
-  getFirestore,
-  onSnapshot,
-  query,
-} from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { collection, getFirestore, onSnapshot, query } from "firebase/firestore"
+import { useEffect, useState } from "react"
+
 import { entries } from "../entries"
 
 import { app } from "../firebase/clientApp"
+
+import { animated, Transition, useTransition } from "@react-spring/web"
 
 const db = getFirestore(app)
 
@@ -23,8 +21,6 @@ const ResultsPage = () => {
   useEffect(() => {
     const q = query(collection(db, "users"))
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      let entryOne = 0
-      let entryTwo = 0
       let testObj = [
         { id: "one", points: 0 },
         { id: "two", points: 0 },
@@ -45,11 +41,9 @@ const ResultsPage = () => {
           if (doc.data()[testObj[i].id]) {
             testObj[i].points += doc.data()[testObj[i].id]
           }
-          console.log("teeeesat", testObj)
+          // console.log("teeeesat", testObj)
         })
       }
-      console.log("Current entry One: ", entryOne)
-      console.log("Current entry Two: ", entryTwo)
       setResult(testObj)
       return () => {
         unsubscribe()
@@ -58,11 +52,8 @@ const ResultsPage = () => {
   }, [])
 
   useEffect(() => {
-    console.log("result", result)
     result?.forEach((res, i) => {
       if (entries[i]) {
-        console.log(i)
-        console.log(entries[i])
         entries[i].points = res.points
       }
     })
@@ -70,32 +61,37 @@ const ResultsPage = () => {
     setFilteredResult(
       copiedEntries.sort((a: any, b: any) => b.points - a.points)
     )
-    console.log("entries", entries)
   }, [result])
 
+  const transition = useTransition(filteredResult, {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    config: { duration: 0 },
+  })
+
   return (
-    <div className="mt-8 grid grid-rows-1 md:grid-cols-3 ">
-      {filteredResult?.map((res: any, i: number) => {
-        return (
-          <div key={i} className="flex p-2">
-            <div className="relative w-full md:w-80">
-              <img src={res.src} alt="" />
-              <span className="font-rampart absolute bottom-0 left-0 text-white text-[40px] md:text-[100px]">
-                {i + 1}
-              </span>
-              <span className="bg-white opacity-70 absolute bottom-1 right-1 ">
-                <span className=" text-[16px] md:text-[30px]">
-                  {res.points} Points
-                </span>
-              </span>
-            </div>
-            {/* <span>{res.points} Poäng</span>
-            <span>{res.name}</span> */}
-          </div>
-        )
-      })}
+    <div className="mt-8 grid grid-rows-1 md:grid-cols-4 w-full flex justify-center items-center md:bg-black">
+      {filteredResult
+        ? transition((style, item, t, i) => (
+            <animated.div key={t.key} style={style}>
+              <div className="flex p-2 justify-center">
+                <div className="relative w-full md:w-[800px] rounded-lg">
+                  <img src={item.src} alt="" className="rounded-lg" />
+                  <span className="font-rampart absolute bottom-0 left-0 text-white text-[40px] md:text-[100px]">
+                    {i + 1}
+                  </span>
+                  <span className="bg-pink-500/80 absolute bottom-1 right-1 p-2 rounded-lg">
+                    <span className=" text-[18px] md:text-[24px] text-white uppercase font-bold tracking-wider">
+                      {item.points} Points
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </animated.div>
+          ))
+        : ""}
     </div>
   )
 }
 
-export default ResultsPage;
+export default ResultsPage

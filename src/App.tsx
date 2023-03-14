@@ -1,13 +1,22 @@
-import { useState } from "react";
-import "./App.css";
-import { getAuth } from "firebase/auth";
-import tw from "tailwind-styled-components";
+import { createContext, Dispatch, SetStateAction, useState } from "react"
+import "./App.css"
+import { getAuth } from "firebase/auth"
+import tw from "tailwind-styled-components"
 
-import LogInPage from "./pages/LogInPage";
-import { app } from "./firebase/clientApp";
-import Home from "./pages/Home";
+import LogInPage from "./pages/LogInPage"
+import { app } from "./firebase/clientApp"
+import Home from "./pages/Home"
 import { setUserEmail } from "./firebase/user"
 
+interface IMenuContext {
+  prev: any
+  setPrev: Dispatch<SetStateAction<any>>
+}
+
+export const GlobalContext = createContext<IMenuContext>({
+  prev: [],
+  setPrev: () => {},
+})
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
@@ -16,7 +25,6 @@ function App() {
   auth.onAuthStateChanged(function (user) {
     if (user) {
       // User is signed in.
-      console.log(user.email)
       if (user.email) {
         setUserEmail(user.email)
         setIsLoggedIn(true)
@@ -26,10 +34,13 @@ function App() {
       setIsLoggedIn(false)
     }
   })
+  const [prev, setPrev] = useState<any>()
 
   return (
     <>
-      <Container>{!isLoggedIn ? <LogInPage /> : <Home />}</Container>
+      <GlobalContext.Provider value={{ prev, setPrev }}>
+        <Container>{!isLoggedIn ? <LogInPage /> : <Home />}</Container>
+      </GlobalContext.Provider>
     </>
   )
 }
@@ -39,11 +50,11 @@ const Container = tw.div`
     text-black
     w-full
     font-reg
-    h-full
-    pb-8
     px-4
     flex
     justify-center
+    md:bg-black
+    md:text-white
     
 `
 
@@ -62,6 +73,6 @@ const Button = tw.div`
     bg-indigo-300
     hover:bg-indigo-700
     focus:outline-none
-`;
+`
 
-export default App;
+export default App

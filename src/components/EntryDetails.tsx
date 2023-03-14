@@ -10,6 +10,7 @@ import { getChosenArtist } from "../firebase/getChosenArtist"
 import ReactPlayer from "react-player"
 import { getUserEmail } from "../firebase/user"
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline"
+import { animated, useTransition } from "@react-spring/web"
 
 interface Details {
   chosenArtist: string | undefined | null
@@ -28,11 +29,19 @@ const EntryDetails = ({ chosenArtist, resetArtist }: Details) => {
   const [data, setData] = useState<any>()
   const [artist, setArtist] = useState<Artist>()
   const [vote, setVote] = useState<number>(0)
+  const [usedNumbers, setUsednumbers] = useState<number[]>([])
+
+  const transition = useTransition(artist, {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    config: { duration: 1000 },
+  })
 
   const db = getFirestore(app)
 
   const getDocument = async () => {
     const fetchedData = await getUserData()
+
     setData(fetchedData)
     if (!(await getChosenArtist(chosenArtist!))) {
       await setDoc(doc(db, "users", getUserEmail()), {
@@ -55,50 +64,60 @@ const EntryDetails = ({ chosenArtist, resetArtist }: Details) => {
   }, [])
 
   const setVotingNumber = async (value: number) => {
+    let newValue = value
+    if (value === vote) {
+      newValue = 0
+    }
     await setDoc(doc(db, "users", getUserEmail()), {
       ...data,
-      [chosenArtist!]: value,
+      [chosenArtist!]: newValue,
     })
+
     setVote(value)
     getDocument()
   }
 
+  useEffect(() => {
+    if (data) {
+      const usedArray = []
+      for (let [key, value] of Object.entries(data!)) {
+        if (typeof value === "number") {
+          usedArray.push(value)
+        }
+      }
+      setUsednumbers(usedArray)
+    }
+  }, [data])
+
   return (
     <div className="w-full">
-      <Button
-        onClick={() => resetArtist(null)}
-        className="w-full px-4 button-19"
-      >
-        <ArrowUturnLeftIcon className="h-6 w-full text-white" />
-      </Button>
-
-      <ArtistDetails>
-        <ReactPlayer
-          url={artist?.video}
-          playing={true}
-          muted={true}
-          width="100%"
-          height="40vh"
-          loop={true}
-          // config={{
-          //   youtube: {
-          //     playerVars: { showinfo: 1 },
-          //     embedOptions: { showinfo: 1 },
-          //   },
-          // }}
-        />
-        <div className="bg-white w-full">
-          <div className="text-left text-2xl mt-2 pl-5">
-            <span>Artist </span>
-            <span>{artist?.name}</span>
-          </div>
-          <div className="text-left text-lg pl-5">
-            <span>Song </span>
-            <span>{artist?.song}</span>
-          </div>
-        </div>
-      </ArtistDetails>
-      <VotingNumbers vote={vote} selectedNumber={setVotingNumber} />
+      {transition((style, item) => (
+        <animated.div style={style}>
+          <ArtistDetails>
+            <ReactPlayer
+              url={artist?.video}
+              playing={true}
+              muted={true}
+              width="100%"
+              height="40vh"
+              loop={true}
+            />
+            <div className="bg-white w-full mb-8">
+              <div className="text-left text-4xl mt-2">
+                <span>{artist?.name}</span>
+              </div>
+              <div className="text-left text-lg">
+                <span>{artist?.song}</span>
+              </div>
+            </div>
+          </ArtistDetails>
+          <VotingNumbers
+            vote={vote}
+            selectedNumber={setVotingNumber}
+            usedNumbers={usedNumbers}
+          />
+        </animated.div>
+      ))}
     </div>
   )
 }
@@ -108,6 +127,7 @@ const ArtistDetails = tw.div`
   text-center
   pointer-events-none
   mb-1
+  mt-4
   
 `
 const Button = tw.button`

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import tw from "tailwind-styled-components"
-import { entries } from "../entries"
 import { getChosenArtist } from "../firebase/getChosenArtist"
 
 interface Entry {
@@ -16,7 +15,6 @@ const Card = (entry: Entry) => {
   useEffect(() => {
     const getData = async () => {
       const getVote = await getChosenArtist(entry.id)
-      console.log("get vote", getVote, entry.id)
       setVote(getVote ? getVote : 0)
     }
     getData()
@@ -24,12 +22,7 @@ const Card = (entry: Entry) => {
   return (
     <CardWrapper>
       <div className="relative rounded-lg">
-        <img
-          src={entry.src}
-          className="rounded-lg"
-          alt="entry image"
-          onClick={() => console.log("open card details")}
-        />
+        <img src={entry.src} className="rounded-lg" alt="entry image" />
         <div className="absolute bottom-0 bg-white w-full rounded-t-lg text-black opacity-70 p-2">
           <div>{entry.name}</div>
           <div>{entry.song}</div>

@@ -5,7 +5,6 @@ import { app } from "./clientApp"
 const db = getFirestore(app)
 
 export const getUserData = async () => {
-  console.log(getUserEmail())
   const docRef = doc(db, "users", getUserEmail())
   const docSnap = await getDoc(docRef)
   return docSnap.data()

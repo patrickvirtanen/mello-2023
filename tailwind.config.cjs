@@ -13,6 +13,7 @@ module.exports = {
         "egg-white": "#EDF5E1",
         "mello-green": "#5CDB95",
         "mello-blue": "#05386B",
+        "pink-rgba": "rgba(245, 40, 145, 0.5)",
       },
     },
   },
